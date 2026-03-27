@@ -238,25 +238,37 @@
   <div class="card hidden" id="resultCard">
     <div class="card-title">查询结果</div>
 
-    <div class="result-section">
-      <div class="result-title">
-        软件隐藏功能
-        <span class="tag tag-software">无需加装硬件</span>
+    <div id="normalResult">
+      <div class="result-section">
+        <div class="result-title">
+          软件隐藏功能
+          <span class="tag tag-software">无需加装硬件</span>
+        </div>
+        <div class="item-list" id="softwareList"></div>
       </div>
-      <div class="item-list" id="softwareList"></div>
+
+      <div class="divider"></div>
+
+      <div class="result-section">
+        <div class="result-title">
+          原厂硬件加装
+          <span class="tag tag-hardware">需加装硬件</span>
+        </div>
+        <div class="item-list" id="hardwareList"></div>
+      </div>
+
+      <p class="tip">以上结果供参考，具体以实车为准</p>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="result-section">
-      <div class="result-title">
-        原厂硬件加装
-        <span class="tag tag-hardware">需加装硬件</span>
-      </div>
-      <div class="item-list" id="hardwareList"></div>
+    <div id="lateResult" class="hidden">
+      <p style="font-size:14px;color:#333;line-height:1.8;text-align:center;padding:12px 0;">
+        沃尔沃官方做了数据加密，目前硬件都有，软件无法适配，所以都无法安装，预计26年6月可以开放
+      </p>
     </div>
 
-    <p class="tip">以上结果供参考，具体以实车为准</p>
+    <div id="resultImg" class="hidden" style="text-align:center;margin-top:16px;">
+      <img src="rnmwoerwo.jpg" alt="说明图片" style="width:100%;border-radius:8px;">
+    </div>
   </div>
 
   <div class="contact-card">
@@ -347,10 +359,21 @@ function updateYears() {
   yearSelect.innerHTML = '<option value="">请选择年款</option>';
   const years = modelYears[model] || [];
   years.forEach(y => {
-    const opt = document.createElement('option');
-    opt.value = y;
-    opt.textContent = y + '款';
-    yearSelect.appendChild(opt);
+    if (y === 26) {
+      const opt1 = document.createElement('option');
+      opt1.value = '26_early';
+      opt1.textContent = '26款（生产日期＜25年47周，早于25年11月13日）';
+      yearSelect.appendChild(opt1);
+      const opt2 = document.createElement('option');
+      opt2.value = '26_late';
+      opt2.textContent = '26款（生产日期＞25年47周，晚于25年11月13日）';
+      yearSelect.appendChild(opt2);
+    } else {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y + '款';
+      yearSelect.appendChild(opt);
+    }
   });
 
   yearSelect.onchange = () => {
@@ -361,42 +384,56 @@ function updateYears() {
 
 function query() {
   const model = document.getElementById('modelSelect').value;
-  const year = parseInt(document.getElementById('yearSelect').value);
+  const yearVal = document.getElementById('yearSelect').value;
 
-  if (!model || !year) return;
+  if (!model || !yearVal) return;
 
   const softwareList = document.getElementById('softwareList');
   const hardwareList = document.getElementById('hardwareList');
+  const normalResult = document.getElementById('normalResult');
+  const lateResult = document.getElementById('lateResult');
+  const resultImg = document.getElementById('resultImg');
 
   softwareList.innerHTML = '';
   hardwareList.innerHTML = '';
 
-  let swCount = 0, hwCount = 0;
+  if (yearVal === '26_late') {
+    normalResult.classList.add('hidden');
+    lateResult.classList.remove('hidden');
+    resultImg.classList.remove('hidden');
+  } else {
+    lateResult.classList.add('hidden');
+    normalResult.classList.remove('hidden');
+    resultImg.classList.remove('hidden');
 
-  softwareData.forEach(([name, ranges]) => {
-    const range = ranges[model];
-    if (range && inRange(year, range)) {
-      const el = document.createElement('span');
-      el.className = 'item item-software';
-      el.textContent = name;
-      softwareList.appendChild(el);
-      swCount++;
-    }
-  });
+    const year = yearVal === '26_early' ? 26 : parseInt(yearVal);
+    let swCount = 0, hwCount = 0;
 
-  hardwareData.forEach(([name, ranges]) => {
-    const range = ranges[model];
-    if (range && inRange(year, range)) {
-      const el = document.createElement('span');
-      el.className = 'item item-hardware';
-      el.textContent = name;
-      hardwareList.appendChild(el);
-      hwCount++;
-    }
-  });
+    softwareData.forEach(([name, ranges]) => {
+      const range = ranges[model];
+      if (range && inRange(year, range)) {
+        const el = document.createElement('span');
+        el.className = 'item item-software';
+        el.textContent = name;
+        softwareList.appendChild(el);
+        swCount++;
+      }
+    });
 
-  if (swCount === 0) softwareList.innerHTML = '<p class="empty">该车型年款暂无可刷软件功能</p>';
-  if (hwCount === 0) hardwareList.innerHTML = '<p class="empty">该车型年款暂无可加装硬件项目</p>';
+    hardwareData.forEach(([name, ranges]) => {
+      const range = ranges[model];
+      if (range && inRange(year, range)) {
+        const el = document.createElement('span');
+        el.className = 'item item-hardware';
+        el.textContent = name;
+        hardwareList.appendChild(el);
+        hwCount++;
+      }
+    });
+
+    if (swCount === 0) softwareList.innerHTML = '<p class="empty">该车型年款暂无可刷软件功能</p>';
+    if (hwCount === 0) hardwareList.innerHTML = '<p class="empty">该车型年款暂无可加装硬件项目</p>';
+  }
 
   document.getElementById('resultCard').classList.remove('hidden');
   document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
