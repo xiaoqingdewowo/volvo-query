@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沃尔沃加装适配查询 | 筱青的沃沃</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #f5f5f5;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+  .header {
+    background: #1a1a1a;
+    color: white;
+    padding: 20px 16px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .header p {
+    font-size: 13px;
+    color: #999;
+    margin-top: 6px;
+  }
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 16px;
+    background: #FF6B00;
+    border-radius: 2px;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #1a1a1a;
+    background: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+  select:focus {
+    outline: none;
+    border-color: #FF6B00;
+  }
+  .btn {
+    width: 100%;
+    padding: 14px;
+    background: #FF6B00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+  .btn:active { opacity: 0.9; }
+  .btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  .result-section {
+    margin-bottom: 16px;
+  }
+  .result-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .tag-software { background: #FFF3E0; color: #FF6B00; }
+  .tag-hardware { background: #E3F2FD; color: #1565C0; }
+  .item-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .item {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid;
+  }
+  .item-software {
+    background: #FFF8F0;
+    border-color: #FFD4A8;
+    color: #CC5500;
+  }
+  .item-hardware {
+    background: #F0F7FF;
+    border-color: #B3D4FF;
+    color: #1565C0;
+  }
+  .empty {
+    font-size: 13px;
+    color: #999;
+    text-align: center;
+    padding: 12px 0;
+  }
+  .contact-card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+    color: white;
+  }
+  .contact-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .contact-card p {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .qr-placeholder {
+    width: 140px;
+    height: 140px;
+    background: white;
+    border-radius: 8px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+  }
+  .qr-placeholder img {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .contact-info {
+    font-size: 13px;
+    color: #ccc;
+  }
+  .hidden { display: none; }
+  .divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 16px 0;
+  }
+  .tip {
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    padding: 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>沃尔沃加装适配查询</h1>
+  <p>输入车型年款，查询可加装项目</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-title">选择您的车型</div>
+    <div class="form-group">
+      <label>车型</label>
+      <select id="modelSelect" onchange="updateYears()">
+        <option value="">请选择车型</option>
+        <option value="S90">S90</option>
+        <option value="XC90">XC90</option>
+        <option value="V90">V90</option>
+        <option value="S60">S60</option>
+        <option value="XC60">XC60</option>
+        <option value="V60">V60</option>
+        <option value="XC40">XC40</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>年款</label>
+      <select id="yearSelect">
+        <option value="">请先选择车型</option>
+      </select>
+    </div>
+    <button class="btn" onclick="query()" id="queryBtn" disabled>查询可加装项目</button>
+  </div>
+
+  <div class="card hidden" id="resultCard">
+    <div class="card-title">查询结果</div>
+
+    <div class="result-section">
+      <div class="result-title">
+        软件隐藏功能
+        <span class="tag tag-software">无需加装硬件</span>
+      </div>
+      <div class="item-list" id="softwareList"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="result-section">
+      <div class="result-title">
+        原厂硬件加装
+        <span class="tag tag-hardware">需加装硬件</span>
+      </div>
+      <div class="item-list" id="hardwareList"></div>
+    </div>
+
+    <p class="tip">以上结果供参考，具体以实车为准</p>
+  </div>
+
+  <div class="contact-card">
+    <h3>想了解详情或预约加装？</h3>
+    <p>扫码联系筱青的沃沃<br>假一罚十 · 终身质保 · 5年0差评</p>
+    <div class="qr-placeholder" id="qrCode">
+      <!-- 替换成微信二维码图片 -->
+      <span>微信二维码</span>
+    </div>
+    <div class="contact-info">评论留车型+年款，真人给方案建议</div>
+  </div>
+
+</div>
+
+<script>
+const modelYears = {
+  'S90':  [17,18,19,20,21,22,23,24,25,26],
+  'XC90': [15,16,17,18,19,20,21,22,23,24,25,26],
+  'V90':  [17,18,19,20,21,22,23,24,25,26],
+  'S60':  [20,21,22,23,24,25,26],
+  'XC60': [18,19,20,21,22,23,24,25,26],
+  'V60':  [20,21,22,23,24,25,26],
+  'XC40': [20,21,22,23,24,25,26],
+};
+
+// 软件数据：[功能名, {车型: 年款范围}]
+const softwareData = [
+  ['北极星Polestar', {S90:'18-26',XC90:'18-26',V90:'18-26',S60:'18-26',XC60:'18-26',V60:'18-26',XC40:'18-26'}],
+  ['领航辅助', {XC90:'15-16',S60:'20-26',V60:'20-26',XC40:'20-26'}],
+  ['全速自适应巡航', {XC90:'15-16',S60:'20-26',V60:'20-26',XC40:'20-26'}],
+  ['导航激活', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['限速路标识别', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['记忆启停', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['永久关闭启停', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['行车播放视频', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['乘客座椅控制', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['取消车速限制', {S90:'17-26',XC90:'15-24',V90:'17-26',S60:'20-26',XC60:'18-24',V60:'20-26',XC40:'20-26'}],
+  ['激活AM收音机', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['七色氛围灯', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['限速器', {S90:'17-21',XC90:'15-16',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['私人锁定装置', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+];
+
+// 硬件数据
+const hardwareData = [
+  ['原厂360全景', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂盲点BLIS', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂雾灯', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂方向盘加热', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂方向盘拨片', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂座椅通风', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂座椅加热', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂水晶档把', {S90:'21-26',XC90:'21-26',V90:'21-26',S60:'22-26',XC60:'22-26',V60:'22-26',XC40:'22-26'}],
+  ['宝华全套音响', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['抬头显示HUD', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂数字胎压', {S90:'17-21',XC90:'15-22',V90:'17-21',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['原厂电动尾门', {S90:'17-26',XC90:'标配',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['液晶仪表', {S90:'17-19',XC90:'15-19',V90:'17-19',S60:'20-22',XC60:'18-21',V60:'20-22',XC40:'20-22'}],
+  ['哈曼全套音响', {S90:'19-26',XC90:'19-26',V90:'19-26',S60:'20-26',XC60:'19-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂门槛灯', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂迎宾灯', {S90:'17-26',XC90:'15-26',V90:'17-26',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+  ['原厂无钥匙进入', {S90:'17-19',XC90:'15-19',V90:'17-19',S60:'20-26',XC60:'18-26',V60:'20-26',XC40:'20-26'}],
+];
+
+function inRange(year, rangeStr) {
+  if (!rangeStr || rangeStr === '/') return false;
+  if (rangeStr === '标配') return false;
+  const parts = rangeStr.split('-');
+  if (parts.length !== 2) return false;
+  const start = parseInt(parts[0]);
+  const end = parseInt(parts[1]);
+  return year >= start && year <= end;
+}
+
+function updateYears() {
+  const model = document.getElementById('modelSelect').value;
+  const yearSelect = document.getElementById('yearSelect');
+  const btn = document.getElementById('queryBtn');
+
+  yearSelect.innerHTML = '';
+  document.getElementById('resultCard').classList.add('hidden');
+
+  if (!model) {
+    yearSelect.innerHTML = '<option value="">请先选择车型</option>';
+    btn.disabled = true;
+    return;
+  }
+
+  yearSelect.innerHTML = '<option value="">请选择年款</option>';
+  const years = modelYears[model] || [];
+  years.forEach(y => {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y + '款';
+    yearSelect.appendChild(opt);
+  });
+
+  yearSelect.onchange = () => {
+    btn.disabled = !yearSelect.value;
+  };
+  btn.disabled = true;
+}
+
+function query() {
+  const model = document.getElementById('modelSelect').value;
+  const year = parseInt(document.getElementById('yearSelect').value);
+
+  if (!model || !year) return;
+
+  const softwareList = document.getElementById('softwareList');
+  const hardwareList = document.getElementById('hardwareList');
+
+  softwareList.innerHTML = '';
+  hardwareList.innerHTML = '';
+
+  let swCount = 0, hwCount = 0;
+
+  softwareData.forEach(([name, ranges]) => {
+    const range = ranges[model];
+    if (range && inRange(year, range)) {
+      const el = document.createElement('span');
+      el.className = 'item item-software';
+      el.textContent = name;
+      softwareList.appendChild(el);
+      swCount++;
+    }
+  });
+
+  hardwareData.forEach(([name, ranges]) => {
+    const range = ranges[model];
+    if (range && inRange(year, range)) {
+      const el = document.createElement('span');
+      el.className = 'item item-hardware';
+      el.textContent = name;
+      hardwareList.appendChild(el);
+      hwCount++;
+    }
+  });
+
+  if (swCount === 0) softwareList.innerHTML = '<p class="empty">该车型年款暂无可刷软件功能</p>';
+  if (hwCount === 0) hardwareList.innerHTML = '<p class="empty">该车型年款暂无可加装硬件项目</p>';
+
+  document.getElementById('resultCard').classList.remove('hidden');
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>
